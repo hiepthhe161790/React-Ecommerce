@@ -1,48 +1,90 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import "./login.css";
+import { useNavigate } from "react-router-dom";
 import { Footer, Navbar } from "../components";
-
 const Login = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch("http://localhost:9999/user")
+      .then((response) => response.json())
+      .then((data) => setUsers(data));
+  }, []);
+
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let indexUser = users.findIndex(
+      (user) => user.account == username && user.password == password
+    );
+    if (indexUser === -1 || users[indexUser].status == 0) {
+      alert("User or password not found");
+    } else {
+      sessionStorage.setItem("user", JSON.stringify(users[indexUser]));
+      if (users[indexUser].roll == 0) {
+        navigate("/");
+      }
+      if (users[indexUser].roll == 1) {
+        navigate("/dashboard");
+      }
+    }
+
+    // Reset the form
+    setUsername("");
+    setPassword("");
+  };
+
   return (
     <>
-      <Navbar />
-      <div className="container my-3 py-3">
-        <h1 className="text-center">Login</h1>
+    <Navbar />
+    <div className="login-container">
+         <h1 className="text-center">Login</h1>
         <hr />
-        <div class="row my-4 h-100">
-          <div className="col-md-4 col-lg-4 col-sm-8 mx-auto">
-            <form>
-              <div class="my-3">
-                <label for="display-4">Email address</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="floatingInput"
-                  placeholder="name@example.com"
-                />
-              </div>
-              <div class="my-3">
-                <label for="floatingPassword display-4">Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="floatingPassword"
-                  placeholder="Password"
-                />
-              </div>
-              <div className="my-3">
-                <p>New Here? <Link to="/register" className="text-decoration-underline text-info">Register</Link> </p>
-              </div>
-              <div className="text-center">
-                <button class="my-2 mx-auto btn btn-dark" type="submit" disabled>
-                  Login
-                </button>
-              </div>
-            </form>
-          </div>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="username">Username:</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={username}
+            onChange={handleUsernameChange}
+            required
+          />
         </div>
-      </div>
-      <Footer />
+        <div className="form-group mb-0">
+          <label htmlFor="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={password}
+            onChange={handlePasswordChange}
+            required
+          />
+        </div>
+        <div className="d-flex float-right pb-3 mr-2">
+          <a href="/register">Register </a>
+        </div>
+        <div className="form-group">
+          <button type="submit" className="login-button">
+            Login
+          </button>
+        </div>
+      </form>
+    
+    </div>
+    <Footer />
     </>
   );
 };
