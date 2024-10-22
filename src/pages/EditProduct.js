@@ -7,48 +7,45 @@ const EditProduct = () => {
     const defaultProduct = {
         id: 0,
         title: "",
-
         description: "",
         category: "",
         image: "",
-        rating: {
-         
-        }
-    }
+        rating: {},
+    };
     const { ProductID } = useParams();
     const [Product, setProduct] = useState(defaultProduct);
     const [Category, setCategory] = useState([]);
     const name = useRef();
     const description = useRef();
-    const category = useRef();
     const price = useRef();
     const image = useRef();
     const rate = useRef();
     const count = useRef();
     const [img, setImg] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState(""); // New state to handle selected category
 
     const updateImage = (e) => {
         const link = e.target.value;
         const links = link.split("\\");
-        const linkname = category.current.value;
-        setImg(`../../images/Product/${linkname}/${links.pop()}`)
-    }
+        const linkname = selectedCategory; // Use selected category
+        setImg(`../../images/Product/${linkname}/${links.pop()}`);
+    };
 
     const handleProduct = async () => {
-        if (name.current.value === "" ) {
+        if (name.current.value === "") {
             alert("Nhập đầy đủ thông tin");
         } else {
             const newproduct = {
                 id: ProductID,
                 title: name.current.value,
-                category: category.current.value,
+                category: selectedCategory, // Use selected category
                 price: parseFloat(price.current.value),
                 description: description.current.value,
-                image: img,
+                image: image.current.value,
                 rating: {
                     rate: parseFloat(rate.current.value),
-                count: parseFloat(count.current.value)
-                }
+                    count: parseFloat(count.current.value),
+                },
             };
             try {
                 await fetch(`http://localhost:9999/products/${ProductID}`, {
@@ -59,20 +56,20 @@ const EditProduct = () => {
                     body: JSON.stringify(newproduct),
                 });
                 alert("Change Successfully");
-                navigate("/dashboard");
+                // navigate("/dashboard");
             } catch (error) {
                 console.error("Error updating product:", error);
             }
         }
-    }
+    };
 
     useEffect(() => {
-        fetch("http://localhost:9999/products")
+        fetch(`http://localhost:9999/products/${ProductID}`)
             .then((res) => res.json())
-            .then((result) => {
-                const currentProduct = result.find((r) => r.id == ProductID);
+            .then((currentProduct) => {
                 setProduct(currentProduct);
                 setImg(currentProduct.image);
+                setSelectedCategory(currentProduct.category); // Set the category to the current product's category
             });
     }, [ProductID]);
 
@@ -80,10 +77,13 @@ const EditProduct = () => {
         fetch("http://localhost:9999/products")
             .then((res) => res.json())
             .then((result) => {
-                setCategory(result);
+                const uniqueCategories = result
+                    .map((product) => product.category)
+                    .filter((category, index, self) => self.indexOf(category) === index);
+                setCategory(uniqueCategories);
             });
     }, []);
-console.log("data la: ",Product)
+
     return (
         <div>
             <Container fluid>
@@ -92,7 +92,7 @@ console.log("data la: ",Product)
                         <div className="topbar">
                             <h1 className="admin-title">Edit Product</h1>
                         </div>
-                        <div className='admin-content'>
+                        <div className="admin-content">
                             <Row>
                                 <Col md={4}>
                                     <div className="form-group">
@@ -103,12 +103,15 @@ console.log("data la: ",Product)
                                 <Col md={4}>
                                     <div className="form-group">
                                         <label htmlFor="category">Category:</label>
-                                        <select className="form-control" id="product" ref={category}>
+                                        <select
+                                            className="form-control"
+                                            id="category"
+                                            value={selectedCategory} // Use value instead of defaultValue
+                                            onChange={(e) => setSelectedCategory(e.target.value)} // Update selected category
+                                        >
                                             {Category.map((c) => (
-                                                <option
-                                                   
-                                                >
-                                                    {c.category}
+                                                <option key={c} value={c}>
+                                                    {c}
                                                 </option>
                                             ))}
                                         </select>
@@ -144,12 +147,12 @@ console.log("data la: ",Product)
                                         <input type="text" className="form-control" id="description" defaultValue={Product.description} ref={description} />
                                     </div>
                                 </Col>
-                               
+
                                 <Col md={6}>
-                                    <img src={img} style={{ width: "100%" }} />
+                                    <img src={img} style={{ width: "100%" }} alt="Product" />
                                     <div className="form-group">
                                         <label htmlFor="image">Image:</label>
-                                        <input type="file" className="form-control" id="image" ref={image} onChange={(e) => updateImage(e)} />
+                                        <input type="text" className="form-control" id="image" defaultValue={Product.image} ref={image} placeholder="Enter image URL" />
                                     </div>
                                 </Col>
                             </Row>
@@ -159,7 +162,7 @@ console.log("data la: ",Product)
                                     height: "70px",
                                     width: "150px",
                                     fontSize: "30px",
-                                    fontWeight: "600"
+                                    fontWeight: "600",
                                 }}
                                 onClick={handleProduct}
                             >
@@ -170,7 +173,7 @@ console.log("data la: ",Product)
                 </Row>
             </Container>
         </div>
-    )
-}
+    );
+};
 
 export default EditProduct;

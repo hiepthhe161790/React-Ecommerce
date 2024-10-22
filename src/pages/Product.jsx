@@ -4,16 +4,15 @@ import { Link, useParams } from "react-router-dom";
 import Marquee from "react-fast-marquee";
 import { useDispatch } from "react-redux";
 import { addCart } from "../redux/action";
-
 import { Footer, Navbar } from "../components";
 
 const Product = () => {
   const { id } = useParams();
-  const [product, setProduct] = useState([]);
+  const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loading2, setLoading2] = useState(false);
-
+  
   const dispatch = useDispatch();
 
   const addProduct = (product) => {
@@ -24,12 +23,14 @@ const Product = () => {
     const getProduct = async () => {
       setLoading(true);
       setLoading2(true);
-      const response = await fetch(`http://localhost:9999/products/${id}`);
+      const response = await fetch(`http://localhost:9999/products?id=${id}`);
       const data = await response.json();
-      setProduct(data);
+      setProduct(data[0]); // Access the first product directly if data is an array
+      console.log(data);
       setLoading(false);
+      
       const response2 = await fetch(
-        `https://fakestoreapi.com/products/category/${data.category}`
+        `http://localhost:9999/products?category=${data[0].category}`
       );
       const data2 = await response2.json();
       setSimilarProducts(data2);
@@ -62,6 +63,8 @@ const Product = () => {
   };
 
   const ShowProduct = () => {
+    if (!product) return null; // Ensure product is not null
+
     return (
       <>
         <div className="container my-5 py-2">
@@ -124,11 +127,16 @@ const Product = () => {
   };
 
   const ShowSimilarProduct = () => {
+    // Exclude the current product from similar products
+    const filteredSimilarProducts = similarProducts.filter(
+      (item) => item.id !== Number(id)
+    );
+
     return (
       <>
         <div className="py-4 my-4">
           <div className="d-flex">
-            {similarProducts.map((item) => {
+            {filteredSimilarProducts.map((item) => {
               return (
                 <div key={item.id} className="card mx-4 text-center">
                   <img
@@ -143,9 +151,6 @@ const Product = () => {
                       {item.title.substring(0, 15)}...
                     </h5>
                   </div>
-                  {/* <ul className="list-group list-group-flush">
-                    <li className="list-group-item lead">${product.price}</li>
-                  </ul> */}
                   <div className="card-body">
                     <Link
                       to={"/product/" + item.id}
@@ -168,6 +173,8 @@ const Product = () => {
       </>
     );
   };
+  
+
   return (
     <>
       <Navbar />
@@ -175,12 +182,8 @@ const Product = () => {
         <div className="row">{loading ? <Loading /> : <ShowProduct />}</div>
         <div className="row my-5 py-5">
           <div className="d-none d-md-block">
-          <h2 className="">You may also Like</h2>
-            <Marquee
-              pauseOnHover={true}
-              pauseOnClick={true}
-              speed={50}
-            >
+            <h2 className="">You may also Like</h2>
+            <Marquee pauseOnHover={true} pauseOnClick={true} speed={50}>
               {loading2 ? <Loading2 /> : <ShowSimilarProduct />}
             </Marquee>
           </div>

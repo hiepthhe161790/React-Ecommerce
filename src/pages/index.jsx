@@ -13,3 +13,6 @@ export { default as Profile } from './Profile';
 export { default as DashBoard } from './DashBoard';
 export { default as EditProduct } from './EditProduct';
 export { default as CreateProduct } from './CreateProduct';
+export { default as MyOrders } from './MyOrder';
+export { default as OrderManager } from './ManageOrder'; 
+export { default as UserManager } from './UserManager'; 

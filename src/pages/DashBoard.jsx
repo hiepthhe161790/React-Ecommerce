@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import { Footer, Navbar } from "../components";
 import { Button, Col, Container, FormControl, Row, Table } from 'react-bootstrap'
 import { useEffect, useState, useRef } from 'react'
-
+import { FaStar } from 'react-icons/fa'; 
+import { BsFillInfoCircleFill } from 'react-icons/bs'; 
 const Dashboard = () => {
     const [Product, setProduct] = useState([]);
     const [searchedProduct, setSearchedProduct] = useState([]);
@@ -15,10 +16,13 @@ const Dashboard = () => {
     const search = useRef("");
 
     useEffect(() => {
-        fetch("http://localhost:9999/user")
+        fetch("http://localhost:9999/products")
             .then((res) => res.json())
             .then((result) => {
-                setCategory(result);
+                const uniqueCategories = result
+                    .map(product => product.category)
+                    .filter((category, index, self) => self.indexOf(category) === index);
+                setCategory(uniqueCategories);
             });
     }, []);
     useEffect(() => {
@@ -111,14 +115,14 @@ const Dashboard = () => {
   ) {
     return (
       <>
-      <Navbar />
+      {/* <Navbar /> */}
       <div>
       <Container fluid>
                 <Row>
                     <SideBar />
-                    <Col md={5} style={{ padding: "0" }}>
-                        <div classtitle="topbar">
-                            <h1 classtitle="admin-title">Product Management</h1>
+                    <Col  md={10}  style={{ margin: "auto" }}>
+                        <div classtitle="topbar" >
+                            <h1 classtitle="admin-title" style={{ textAlign:"center" }}>Product Management</h1>
                         </div>
                         <div classtitle='admin-content'>
                             <Container>
@@ -127,9 +131,9 @@ const Dashboard = () => {
                                         <select onChange={(e) => filterByCategory(e)}>
                                             <option value="all">-- Filter By Category --</option>
                                             {
-                                                Product.map((c) => {
+                                                Category.map((c) => {
                                                     return (
-                                                        <option >{c.category}</option>
+                                                        <option >{c}</option>
                                                     )
                                                 })
                                             }
@@ -183,15 +187,19 @@ const Dashboard = () => {
                                                                 <td><Link to={`/EditProduct/${p.id}`}
                                                                     title='edit'>
                                                                         {/* {product.title.substring(0, 12)}... */}
-                                                                    {p.title.substring(0, 12)}...</Link></td>
+                                                                    {p.title.substring(0, 12)}... <BsFillInfoCircleFill /></Link></td>
                                                                     
                                                                 <td>{p.price}</td>
-                                                                <td>{p.description}</td>
+                                                                <td>{p.description.length > 50 ? `${p.description.substring(0, 50)}...` : p.description}</td>
                                                                 <td>{
                                                                    p.category
                                                                 }</td>
-                                                                <td>{p.image}</td>
-                                                                <td>{p.rating.rate}</td>
+                                                                {/* <td>{p.image}</td> */}
+                                                                <td>
+                                                                <img src={p.image} alt="Product" style={{ width: "60px", height: "auto" }} />
+                                                                </td>
+
+                                                                <td>{p.rating.rate} <FaStar style={{ color: 'gold' }} /></td>
                                                                 <td><Link
                                                                     onClick={() => deleteProduct(p.id)}>
                                                                     Delete</Link></td>

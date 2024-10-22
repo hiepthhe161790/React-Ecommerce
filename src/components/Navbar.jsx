@@ -39,6 +39,7 @@ const Navbar = () => {
                         {user ? (
                             <>
                                 <NavLink to="/profile" className="btn btn-outline-dark m-2"><i className="fa fa-user-circle mr-1"></i> Profile</NavLink>
+                                <NavLink to="/myorders" className="btn btn-outline-dark m-2"> <i className="fa fa-list-alt mr-1"></i> Orders</NavLink>
                                 <NavLink to="/logout" className="btn btn-outline-dark m-2"><i className="fa fa-sign-out-alt mr-1"></i> Logout</NavLink>
                             </>
                         ) : (

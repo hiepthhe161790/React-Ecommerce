@@ -1,51 +1,68 @@
-
-import { Row, Col } from "react-bootstrap";
+import { Col } from "react-bootstrap";
 import { NavLink, Link } from "react-router-dom";
+
 const SideBar = () => {
   return (
-    <Col md={2} className="side-bar">
-      <Link to="/">
-       <h1>Home</h1>
+    <Col md={2} className="sidebar bg-dark vh-100 d-flex flex-column align-items-center">
+      <Link to="/" className="text-decoration-none text-white mt-4">
+        <h2 className="text-center">Home</h2>
       </Link>
-      <ul className="adminsidebar"
-        style={{ marginTop: "80px" }}>
-        <li>
-          <NavLink to="/categorymanagement">
-            <div className="navlink-container">
-              <p style={{ marginLeft: "30px" }}>Categories</p>
-            </div>
+
+      <ul className="adminsidebar list-unstyled w-100 mt-5">
+        
+        <li className="mb-3">
+          <NavLink
+            to="/dashboard"
+            className="navlink-container d-flex align-items-center text-white py-2 px-4 rounded hover-effect"
+            activeClassName="active-link"
+          >
+            <i className="bi bi-box me-2"></i>
+            <p className="mb-0">Products</p>
           </NavLink>
         </li>
-        <li>
-          <NavLink to="/productmanagement">
-            <div className="navlink-container">
-              <p style={{ marginLeft: "30px" }}>Products</p>
-            </div>
+        <li className="mb-3">
+          <NavLink
+            to="/adminusers"
+            className="navlink-container d-flex align-items-center text-white py-2 px-4 rounded hover-effect"
+            activeClassName="active-link"
+          >
+            <i className="bi bi-people me-2"></i>
+            <p className="mb-0">Users</p>
           </NavLink>
         </li>
-        <li>
-          <NavLink to="/adminusers">
-            <div className="navlink-container">
-              <p style={{ marginLeft: "30px" }}>Users</p>
-            </div>
+        <li className="mb-3">
+          <NavLink
+            to="/adminorders"
+            className="navlink-container d-flex align-items-center text-white py-2 px-4 rounded hover-effect"
+            activeClassName="active-link"
+          >
+            <i className="bi bi-receipt me-2"></i>
+            <p className="mb-0">Orders</p>
           </NavLink>
         </li>
-        <li>
-          <NavLink to="/adminorders">
-            <div className="navlink-container">
-              <p style={{ marginLeft: "30px" }}>Orders</p>
-            </div>
+        <li className="mb-3">
+          <NavLink
+            to="/categorymanagement"
+            className="navlink-container d-flex align-items-center text-white py-2 px-4 rounded hover-effect"
+            activeClassName="active-link"
+          >
+            <i className="bi bi-list-ul me-2"></i>
+            <p className="mb-0">Categories</p>
           </NavLink>
         </li>
-        <li>
-          <NavLink to="/statistics">
-            <div className="navlink-container">
-              <p style={{ marginLeft: "30px" }}>Statistics</p>
-            </div>
+        <li className="mb-3">
+          <NavLink
+            to="/statistics"
+            className="navlink-container d-flex align-items-center text-white py-2 px-4 rounded hover-effect"
+            activeClassName="active-link"
+          >
+            <i className="bi bi-graph-up me-2"></i>
+            <p className="mb-0">Statistics</p>
           </NavLink>
         </li>
-      </ul >
-    </Col >
+      </ul>
+    </Col>
   );
 };
+
 export default SideBar;

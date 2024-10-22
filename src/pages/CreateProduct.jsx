@@ -40,10 +40,13 @@ const CreateProduct = () => {
         fetch("http://localhost:9999/products")
             .then((res) => res.json())
             .then((result) => {
-                setCategory(result);
+                const uniqueCategories = result
+                    .map(product => product.category)
+                    .filter((category, index, self) => self.indexOf(category) === index);
+                setCategory(uniqueCategories);
             });
-    }, [])
-
+    }, []);
+    
     const handleCreate = async () => {
         if (name.current.value == "" || category.current.value == "" ||
             price.current.value == ""
@@ -66,7 +69,8 @@ const CreateProduct = () => {
                         rate: parseFloat(rate.current.value),
                         count: parseFloat(count.current.value)
                     },
-                    image: `../../images/Product/${linkname}/${links.pop()}`
+                    // image: `../../images/Product/${linkname}/${links.pop()}`
+                    image: image.current.value
                 }
 
                 const response = await fetch("http://localhost:9999/products", {
@@ -94,6 +98,7 @@ const CreateProduct = () => {
     }
 
 // console.log("data la :", Product )
+console.log("category", Category)
     return (
         <div>
             <Container fluid>
@@ -114,7 +119,7 @@ const CreateProduct = () => {
                                                 return (
                                                     <option
                                                         >
-                                                        {c.category}
+                                                        {c}
                                                     </option>
                                                 )
                                             })
@@ -171,10 +176,11 @@ const CreateProduct = () => {
                                     <img src={img} style={{ width: "100%" }} />
                                     <div className="form-group">
                                         <label htmlFor="image">Image:</label>
-                                        <input type="file"
+                                        {/* <input type="file"
                                             className="form-control"
                                             id="image" ref={image}
-                                            onChange={(e) => updateImage(e)} />
+                                            onChange={(e) => updateImage(e)} /> */}
+                                        <input type="text" className="form-control" id="image" ref={image} placeholder="Enter image URL" />
                                     </div>
                                 </Col>
                             </Row>
